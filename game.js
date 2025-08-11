@@ -210,9 +210,20 @@ class SqncesGame {
             return;
         }
         
+        // Check win condition first
+        const hiddenWord = this.gameData[this.currentLength].hiddenWord;
+        const isWin = guess === hiddenWord;
+        
         // Process the guess
         this.processGuess(guess);
         this.guesses.push(guess);
+        
+        // If it's a win, override all tiles to be CORRECT
+        if (isWin) {
+            for (let i = 0; i < this.currentLength; i++) {
+                this.gameBoard[this.currentRow][i].type = this.tileTypes.CORRECT;
+            }
+        }
         
         // Update display
         this.updateTileColors(this.currentRow, guess);
@@ -220,9 +231,7 @@ class SqncesGame {
         this.filterPossibleAnswers();
         this.updateAnalysis();
         
-        // Check win condition
-        const hiddenWord = this.gameData[this.currentLength].hiddenWord;
-        if (guess === hiddenWord) {
+        if (isWin) {
             this.isGameComplete = true;
             this.showMessage('Congratulations! You found the word!');
             return;
@@ -270,7 +279,7 @@ class SqncesGame {
         
         let answerData = answer.split('');
         
-        // Helper function
+        // Helper function to determine if we should continue processing the current tile
         const shouldBreak = (i) => {
             if (sqnceOffset > 0) {
                 return i > result.tiles.length + 1 - sqnceOffset;
@@ -300,7 +309,7 @@ class SqncesGame {
             if (shouldBreak(i)) break;
             if (i - sqnceOffset >= 0) {
                 if (result.tiles[i].type === this.tileTypes.UNDEFINED && 
-                    result.tiles[i].letter === answerData[i - sqnceOffset]) {
+                    result.tiles[i].letter.toLowerCase() === answerData[i - sqnceOffset].toLowerCase()) {
                     result.tiles[i].type = this.tileTypes.CORRECT;
                     answerData[i - sqnceOffset] = ' ';
                 }
@@ -312,7 +321,7 @@ class SqncesGame {
             if (shouldBreak(i)) break;
             if (result.tiles[i].type === this.tileTypes.UNDEFINED) {
                 for (let j = 0; j < answerData.length; j++) {
-                    if (result.tiles[i].letter === answerData[j]) {
+                    if (result.tiles[i].letter.toLowerCase() === answerData[j].toLowerCase()) {
                         result.tiles[i].type = this.tileTypes.MISPLACED;
                         answerData[j] = ' ';
                         break;
@@ -321,7 +330,7 @@ class SqncesGame {
             }
         }
         
-        // Fifth pass: Mark remaining as incorrect
+        // Fifth pass: Mark remaining undefined tiles as incorrect
         for (let i = 0; i < result.tiles.length; i++) {
             if (shouldBreak(i)) break;
             if (result.tiles[i].type === this.tileTypes.UNDEFINED) {
@@ -413,8 +422,6 @@ class SqncesGame {
                 return this.validatePossibleAnswer(word, result, guessIndex);
             });
         });
-        
-        console.log(`Filtered to ${this.possibleAnswers.length} possible answers`);
     }
     
     validatePossibleAnswer(possibleAnswer, result, guessNumber) {
@@ -442,15 +449,50 @@ class SqncesGame {
             }
         }
         
-        // Check incorrect tiles
-        const modifiedAnswer = possibleAnswer.replace(sequence, '   ');
-        for (const tile of result.tiles) {
-            if (tile.type === this.tileTypes.INCORRECT) {
-                if (modifiedAnswer.includes(tile.letter)) return false;
+        // Check incorrect tiles - need to track letter counts
+        let modifiedAnswerArray = possibleAnswer.replace(sequence, '   ').split('');
+        
+        // First, remove all CORRECT letters from the available pool
+        for (let i = 0; i < result.tiles.length; i++) {
+            if (result.tiles[i].type === this.tileTypes.CORRECT) {
+                const answerIndex = i - sqnceOffset;
+                if (answerIndex >= 0 && answerIndex < modifiedAnswerArray.length) {
+                    modifiedAnswerArray[answerIndex] = ' ';
+                }
             }
         }
         
-        // Check misplaced tiles
+        // Then check MISPLACED tiles and remove them from pool
+        for (let i = 0; i < result.tiles.length; i++) {
+            if (result.tiles[i].type === this.tileTypes.MISPLACED) {
+                const idx = modifiedAnswerArray.indexOf(result.tiles[i].letter);
+                if (idx !== -1) {
+                    modifiedAnswerArray[idx] = ' ';
+                }
+            }
+        }
+        
+        // Finally, check that INCORRECT tiles are not in the remaining pool
+        for (const tile of result.tiles) {
+            if (tile.type === this.tileTypes.INCORRECT) {
+                if (modifiedAnswerArray.includes(tile.letter)) return false;
+            }
+        }
+        
+        // Check misplaced tiles  
+        const modifiedAnswerForMisplaced = possibleAnswer.replace(sequence, '   ');
+        let availableLetters = modifiedAnswerForMisplaced.split('');
+        
+        // Remove letters used by correct tiles
+        for (let i = 0; i < result.tiles.length; i++) {
+            if (result.tiles[i].type === this.tileTypes.CORRECT) {
+                const answerIndex = i - sqnceOffset;
+                if (answerIndex >= 0 && answerIndex < availableLetters.length) {
+                    availableLetters[answerIndex] = ' ';
+                }
+            }
+        }
+        
         for (let i = 0; i < result.tiles.length; i++) {
             const tile = result.tiles[i];
             if (tile.type === this.tileTypes.MISPLACED) {
@@ -458,7 +500,10 @@ class SqncesGame {
                 if (answerIndex >= 0 && answerIndex < possibleAnswer.length) {
                     if (tile.letter === possibleAnswer[answerIndex]) return false;
                 }
-                if (!modifiedAnswer.includes(tile.letter)) return false;
+                const letterIndex = availableLetters.indexOf(tile.letter);
+                if (letterIndex === -1) return false;
+                // Mark this letter as used
+                availableLetters[letterIndex] = ' ';
             }
         }
         
@@ -642,10 +687,6 @@ class SqncesGame {
             
             listElement.appendChild(div);
         }
-        
-        // Verify probabilities sum to 1 (for debugging)
-        const probabilitySum = recommendations.reduce((sum, rec) => sum + rec.probability, 0);
-        console.log(`Probability sum: ${probabilitySum.toFixed(6)} (should be ~1.000000)`);
     }
     
     showMessage(text) {

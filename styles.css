@@ -190,9 +190,9 @@ h3 {
 }
 
 .tile.incorrect {
-    background-color: #787c7e;
+    background-color: #d9534f;
     color: #fff;
-    border-color: #787c7e;
+    border-color: #d9534f;
 }
 
 .tile.sequence {
@@ -269,9 +269,9 @@ h3 {
 }
 
 .key.incorrect {
-    background-color: #787c7e;
+    background-color: #d9534f;
     color: #fff;
-    border-color: #787c7e;
+    border-color: #d9534f;
 }
 
 /* Analysis Panel */
