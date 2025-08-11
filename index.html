@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sqnces Analysis Tool</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="title-section">
+                <h1>Sqnces Analysis Tool</h1>
+                <div class="game-info">
+                    <span class="game-number">#255</span>
+                    <select class="game-length-selector" id="gameLength">
+                        <option value="6">6 Letters</option>
+                        <option value="7">7 Letters</option>
+                        <option value="8">8 Letters</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sequence Display -->
+        <div class="sequence-display" id="sequenceDisplay">
+            <span class="sequence-letters"></span>
+        </div>
+
+        <!-- Main Game Area -->
+        <div class="main-content">
+            <!-- Game Board -->
+            <div class="game-section">
+                <div class="game-board" id="gameBoard">
+                    <!-- Game grid will be generated dynamically -->
+                </div>
+                
+                <!-- Keyboard -->
+                <div class="keyboard" id="keyboard">
+                    <div class="keyboard-row">
+                        <button class="key" data-key="Q">Q</button>
+                        <button class="key" data-key="W">W</button>
+                        <button class="key" data-key="E">E</button>
+                        <button class="key" data-key="R">R</button>
+                        <button class="key" data-key="T">T</button>
+                        <button class="key" data-key="Y">Y</button>
+                        <button class="key" data-key="U">U</button>
+                        <button class="key" data-key="I">I</button>
+                        <button class="key" data-key="O">O</button>
+                        <button class="key" data-key="P">P</button>
+                    </div>
+                    <div class="keyboard-row">
+                        <button class="key" data-key="A">A</button>
+                        <button class="key" data-key="S">S</button>
+                        <button class="key" data-key="D">D</button>
+                        <button class="key" data-key="F">F</button>
+                        <button class="key" data-key="G">G</button>
+                        <button class="key" data-key="H">H</button>
+                        <button class="key" data-key="J">J</button>
+                        <button class="key" data-key="K">K</button>
+                        <button class="key" data-key="L">L</button>
+                    </div>
+                    <div class="keyboard-row">
+                        <button class="key wide" data-key="ENTER">Enter</button>
+                        <button class="key" data-key="Z">Z</button>
+                        <button class="key" data-key="X">X</button>
+                        <button class="key" data-key="C">C</button>
+                        <button class="key" data-key="V">V</button>
+                        <button class="key" data-key="B">B</button>
+                        <button class="key" data-key="N">N</button>
+                        <button class="key" data-key="M">M</button>
+                        <button class="key wide" data-key="BACKSPACE">⌫</button>
+                    </div>
+                    <div class="keyboard-row">
+                        <button class="key extra-wide" data-key="BLANK">Blank</button>
+                        <button class="key extra-wide" data-key="ENTER">Enter</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analysis Panel -->
+            <div class="analysis-panel" id="analysisPanel">
+                <div class="analysis-section">
+                    <h2>Analysis</h2>
+                    
+                    <div class="metrics">
+                        <div class="metric">
+                            <label>Possible Answers:</label>
+                            <span id="possibleAnswers">—</span>
+                        </div>
+                        <div class="metric">
+                            <label>Uncertainty (bits):</label>
+                            <span id="uncertainty">—</span>
+                        </div>
+                        <div class="metric">
+                            <label>Information Gained:</label>
+                            <span id="infoGained">—</span>
+                        </div>
+                    </div>
+
+                    <div class="recommendations">
+                        <h3>All Possible Answers</h3>
+                        <div class="recommendations-list" id="recommendationsList">
+                            <!-- Recommendations will be populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message Display -->
+        <div class="message" id="message" style="display: none;"></div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
