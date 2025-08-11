@@ -21,6 +21,9 @@
                     </select>
                 </div>
             </div>
+            <div class="header-buttons">
+                <button class="info-btn" id="infoBtn" title="About the Algorithm">ℹ</button>
+            </div>
         </header>
 
         <!-- Sequence Display -->
@@ -100,7 +103,7 @@
                     </div>
 
                     <div class="recommendations">
-                        <h3>All Possible Answers</h3>
+                        <h3>Guess Ranking</h3>
                         <div class="recommendations-list" id="recommendationsList">
                             <!-- Recommendations will be populated dynamically -->
                         </div>
@@ -111,6 +114,41 @@
 
         <!-- Message Display -->
         <div class="message" id="message" style="display: none;"></div>
+    </div>
+
+    <!-- Info Modal -->
+    <div class="modal" id="infoModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>About the Algorithm</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    The word ranking algorithms used in this tool are based on 
+                    <a href="https://www.youtube.com/watch?v=v68zYyaEmEA" target="_blank" rel="noopener">
+                        Grant Sanderson's excellent Wordle solver video
+                    </a> from 3Blue1Brown.
+                </p>
+                <p>
+                    The solver uses information theory to calculate the expected information gain 
+                    from each possible guess, ranking words by their ability to narrow down the 
+                    solution space efficiently.
+                </p>
+                <p>
+                    Key concepts:
+                </p>
+                <ul>
+                    <li><strong>Entropy:</strong> Measures uncertainty in the remaining possible answers</li>
+                    <li><strong>Information Gain:</strong> How much a guess reduces that uncertainty</li>
+                    <li><strong>Expected Score:</strong> Predicted number of guesses needed if this word is chosen</li>
+                </ul>
+                <p>
+                    Watch the video for a beautiful visual explanation of how these concepts apply 
+                    to word guessing games.
+                </p>
+            </div>
+        </div>
     </div>
 
     <script src="game.js"></script>

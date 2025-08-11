@@ -89,6 +89,10 @@ class SqncesGame {
         
         // Keyboard events
         document.addEventListener('keydown', (e) => {
+            // Don't handle keyboard when modal is open
+            const modal = document.getElementById('infoModal');
+            if (modal && modal.style.display === 'block') return;
+            
             this.handleKeyPress(e.key.toLowerCase());
         });
         
@@ -99,6 +103,35 @@ class SqncesGame {
                 this.handleKeyPress(key);
             }
         });
+        
+        // Info button and modal
+        const infoBtn = document.getElementById('infoBtn');
+        const infoModal = document.getElementById('infoModal');
+        const closeModal = document.getElementById('closeModal');
+        
+        if (infoBtn && infoModal) {
+            infoBtn.addEventListener('click', () => {
+                infoModal.style.display = 'block';
+            });
+            
+            closeModal.addEventListener('click', () => {
+                infoModal.style.display = 'none';
+            });
+            
+            // Close modal when clicking outside
+            infoModal.addEventListener('click', (e) => {
+                if (e.target === infoModal) {
+                    infoModal.style.display = 'none';
+                }
+            });
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && infoModal.style.display === 'block') {
+                    infoModal.style.display = 'none';
+                }
+            });
+        }
     }
     
     resetGame() {
@@ -671,15 +704,15 @@ class SqncesGame {
                 <div class="recommendation-word">${rec.word}</div>
                 <div class="recommendation-stats">
                     <div class="recommendation-stat">
-                        <div class="label">Entropy</div>
+                        <div class="label">E[Info.]</div>
                         <div class="value">${rec.entropy.toFixed(2)}</div>
                     </div>
                     <div class="recommendation-stat">
-                        <div class="label">Prob</div>
+                        <div class="label">p(word)</div>
                         <div class="value">${probDisplay}</div>
                     </div>
                     <div class="recommendation-stat">
-                        <div class="label">Score</div>
+                        <div class="label">E[Score]</div>
                         <div class="value">${rec.expectedScore.toFixed(2)}</div>
                     </div>
                 </div>
